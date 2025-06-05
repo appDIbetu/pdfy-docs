@@ -15,39 +15,12 @@
         "post": {
           "summary": "Generate PDF or Image",
           "description": "Generates a PDF or Image based on the provided input and mode.",
-          "parameters": [
-            {
-              "name": "mode",
-              "in": "query",
-              "description": "Operation mode: 'pdf' or 'image'",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "enum": ["pdf", "image"]
-              }
-            },
-            {
-              "name": "x-client-api-key",
-              "in": "header",
-              "description": "API key for authentication",
-              "required": true,
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
           "requestBody": {
-            "description": "Request payload for PDF or Image generation",
             "required": true,
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    { "$ref": "#/components/schemas/HtmlToPdfRequest" },
-                    { "$ref": "#/components/schemas/UrlToPdfRequest" },
-                    { "$ref": "#/components/schemas/HtmlImageRequest" },
-                    { "$ref": "#/components/schemas/UrlImageRequest" }
-                  ]
+                  "$ref": "#/components/schemas/GenerateRequest"
                 }
               }
             }
@@ -78,6 +51,39 @@
     },
     "components": {
       "schemas": {
+        "GenerateRequest": {
+          "type": "object",
+          "required": ["mode", "x-client-api-key", "payload"],
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": ["pdf", "image"],
+              "default": "image"
+            },
+            "x-client-api-key": {
+              "type": "string",
+              "description": "API key for authentication"
+            },
+            "payload": {
+              "oneOf": [
+                { "$ref": "#/components/schemas/HtmlToPdfRequest" },
+                { "$ref": "#/components/schemas/UrlToPdfRequest" },
+                { "$ref": "#/components/schemas/HtmlImageRequest" },
+                { "$ref": "#/components/schemas/UrlImageRequest" }
+              ]
+            }
+          },
+          "example": {
+            "mode": "pdf",
+            "x-client-api-key": "your-api-key-here",
+            "payload": {
+              "html_content": "<html><body><h1>Hello</h1></body></html>",
+              "css_content": "h1 { color: red; }",
+              "paper_size": "A4",
+              "landscape": false
+            }
+          }
+        },
         "HtmlToPdfRequest": {
           "type": "object",
           "required": ["html_content"],

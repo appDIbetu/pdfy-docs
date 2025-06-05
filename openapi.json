@@ -15,12 +15,31 @@
         "post": {
           "summary": "Generate PDF or Image",
           "description": "Generates a PDF or Image based on the provided input and mode.",
+          "parameters": [
+            {
+              "name": "x-client-api-key",
+              "in": "header",
+              "description": "API key for authentication",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
           "requestBody": {
             "required": true,
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GenerateRequest"
+                },
+                "example": {
+                  "mode": "pdf",
+                  "html_content": "<html><body><h1>Hello</h1></body></html>",
+                  "css_content": "h1 { color: red; }",
+                  "paper_size": "A4",
+                  "landscape": false,
+                  "generate_url": false
                 }
               }
             }
@@ -53,40 +72,80 @@
       "schemas": {
         "GenerateRequest": {
           "type": "object",
-          "required": ["mode", "x-client-api-key", "payload"],
           "properties": {
             "mode": {
               "type": "string",
-              "enum": ["pdf", "image"],
+              "enum": [
+                "pdf",
+                "image"
+              ],
               "default": "image"
             },
-            "x-client-api-key": {
+            "html_content": {
               "type": "string",
-              "description": "API key for authentication"
+              "description": "HTML content to be rendered"
             },
-            "payload": {
-              "oneOf": [
-                { "$ref": "#/components/schemas/HtmlToPdfRequest" },
-                { "$ref": "#/components/schemas/UrlToPdfRequest" },
-                { "$ref": "#/components/schemas/HtmlImageRequest" },
-                { "$ref": "#/components/schemas/UrlImageRequest" }
+            "css_content": {
+              "type": "string",
+              "description": "CSS styles for the HTML content"
+            },
+            "url": {
+              "type": "string",
+              "description": "URL to be converted"
+            },
+            "paper_size": {
+              "type": "string",
+              "default": "A4",
+              "enum": [
+                "A4",
+                "A3",
+                "Letter",
+                "Legal",
+                "Tabloid"
               ]
+            },
+            "landscape": {
+              "type": "boolean",
+              "default": false
+            },
+            "generate_url": {
+              "type": "boolean",
+              "default": false
             }
           },
-          "example": {
-            "mode": "pdf",
-            "x-client-api-key": "your-api-key-here",
-            "payload": {
-              "html_content": "<html><body><h1>Hello</h1></body></html>",
-              "css_content": "h1 { color: red; }",
-              "paper_size": "A4",
-              "landscape": false
+          "required": []
+        },
+        "SuccessResponse": {
+          "type": "object",
+          "properties": {
+            "pdf_url": {
+              "type": "string",
+              "example": "https://example.com/generated.pdf"
+            },
+            "success": {
+              "type": "boolean",
+              "example": true
+            },
+            "file_size_bytes": {
+              "type": "integer",
+              "example": 188321
+            },
+            "pages": {
+              "type": "integer",
+              "example": 5
+            },
+            "file_deletion_date": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-06-05"
             }
           }
         },
         "HtmlToPdfRequest": {
           "type": "object",
-          "required": ["html_content"],
+          "required": [
+            "html_content"
+          ],
           "properties": {
             "html_content": {
               "type": "string",
@@ -99,7 +158,13 @@
             "paper_size": {
               "type": "string",
               "default": "A4",
-              "enum": ["A4", "A3", "Letter", "Legal", "Tabloid"]
+              "enum": [
+                "A4",
+                "A3",
+                "Letter",
+                "Legal",
+                "Tabloid"
+              ]
             },
             "landscape": {
               "type": "boolean",
@@ -136,7 +201,9 @@
         },
         "UrlToPdfRequest": {
           "type": "object",
-          "required": ["url"],
+          "required": [
+            "url"
+          ],
           "properties": {
             "url": {
               "type": "string",
@@ -145,7 +212,13 @@
             "paper_size": {
               "type": "string",
               "default": "A4",
-              "enum": ["A4", "A3", "Letter", "Legal", "Tabloid"]
+              "enum": [
+                "A4",
+                "A3",
+                "Letter",
+                "Legal",
+                "Tabloid"
+              ]
             },
             "landscape": {
               "type": "boolean",
@@ -187,7 +260,9 @@
         },
         "HtmlImageRequest": {
           "type": "object",
-          "required": ["html_content"],
+          "required": [
+            "html_content"
+          ],
           "properties": {
             "html_content": {
               "type": "string"
@@ -220,13 +295,20 @@
             "response_format": {
               "type": "string",
               "default": "url",
-              "enum": ["url", "base64", "both", "image"]
+              "enum": [
+                "url",
+                "base64",
+                "both",
+                "image"
+              ]
             }
           }
         },
         "UrlImageRequest": {
           "type": "object",
-          "required": ["url"],
+          "required": [
+            "url"
+          ],
           "properties": {
             "url": {
               "type": "string",
@@ -269,33 +351,12 @@
             "response_format": {
               "type": "string",
               "default": "url",
-              "enum": ["url", "base64", "both", "image"]
-            }
-          }
-        },
-        "SuccessResponse": {
-          "type": "object",
-          "properties": {
-            "pdf_url": {
-              "type": "string",
-              "example": "https://example.com/generated.pdf"
-            },
-            "success": {
-              "type": "boolean",
-              "example": true
-            },
-            "file_size_bytes": {
-              "type": "integer",
-              "example": 188321
-            },
-            "pages": {
-              "type": "integer",
-              "example": 5
-            },
-            "file_deletion_date": {
-              "type": "string",
-              "format": "date",
-              "example": "2025-04-28"
+              "enum": [
+                "url",
+                "base64",
+                "both",
+                "image"
+              ]
             }
           }
         }

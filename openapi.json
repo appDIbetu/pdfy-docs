@@ -15,7 +15,7 @@
       "post": {
         "summary": "Generate PDF or Image",
         "description": "Generates a PDF or Image based on the provided input and mode.",
-        "variables": [
+        "parameters": [
           {
             "name": "x-client-api-key",
             "in": "header",
